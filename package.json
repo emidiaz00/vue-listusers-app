@@ -11,7 +11,9 @@
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.8.3",
-    "vue": "^3.2.13"
+    "vue": "^3.2.13",
+    "vue-bootstrap4-modal": "^2.2.0",
+    "vue-bs-modal": "^0.7.9"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

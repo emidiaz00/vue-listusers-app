@@ -10,9 +10,9 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Name</th>
+            <th scope="col">User</th>
+            <th scope="col">Email</th>
             <th scope="col">Options</th>
           </tr>
         </thead>
@@ -22,18 +22,32 @@
             <td>{{ user.name }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.website }}</td>
-            <td><button class="btn btn-info btn-block">Update</button></td>
+           
             <td><button @click="deleteUsers(user.id , $event)" class="btn btn-danger btn-block">Delete</button></td>
           </tr>
         </tbody>
+        
       </table>
     </div>
-  </body>
+    <div class="page">
+      <bs-modal v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose">
+          Some content displayed in the modal.
+          
+          <button type="button" class="btn btn-secondary" v-on:click="this.toggleModal" data-dismiss="modal">Close</button>
+      </bs-modal>
+      
+      <button v-on:click="this.toggleModal">Toggle modal</button>
+  </div>
+</body>
 </template>
 
 <script>
+import ModalComponent from 'vue-bootstrap4-modal'
 
 export default {
+  components: {
+        'bs-modal': ModalComponent
+    },
   // eslint-disable-next-line vue/multi-word-component-names
   data() {
     return {
@@ -44,9 +58,11 @@ export default {
         email: '',
       },
       operation: "Register",
-      userIndex: -1
+      userIndex: -1,
+      showModal: false
     }
   },
+  
   created() {
     if (localStorage.getItem('vue3.users') !== null) {
       this.users = JSON.parse(localStorage.getItem('vue3.users'));
@@ -58,6 +74,19 @@ export default {
     
   },
   methods: {
+    toggleModal() {
+            this.showModal = ! this.showModal
+        },
+
+        handleOpen() {
+            console.log('Modal is about to open.');
+        },
+
+        handleClose() {
+            console.log('Modal has closed.');
+            
+            this.showModal = false
+        },
     listUsers: async function() {
       const res = await fetch("https://jsonplaceholder.typicode.com/users");
       const data = await res.json();
@@ -68,7 +97,7 @@ export default {
       localStorage.setItem('vue3.users', JSON.stringify(this.users));
     },
     updateUsers: function() {
-
+      
     },
     deleteUsers: function(id, event) {
       const confirmation = confirm("Do you want to delete user?");
@@ -79,7 +108,7 @@ export default {
       } else {
         event.preventDefault();
       }
-
+      
     }
   }
 }
@@ -88,5 +117,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 
 </style>
