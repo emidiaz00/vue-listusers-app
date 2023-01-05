@@ -28,8 +28,8 @@
         </tbody>
       </table>
       <div class="w-50 mx-auto justify-content-center align-items-center">
-        <div ref="userForm" v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose" v-on:submit="processUser" class="card card-body">
-          <form>
+        <div v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose" class="card card-body">
+          <form ref="userForm" v-on:submit="createUser">
             <div class="form-group">
               <input type="text" ref="name" v-model="user.name" class="form-control" placeholder="Name"
               minlength="10" maxlength="50" required />
@@ -64,6 +64,7 @@ export default {
     return {
       users: [],
       user: {
+        id: '',
         name: '',
         username: '',
         email: '',
@@ -81,7 +82,7 @@ export default {
     }
   },
   mounted() {
-    // code
+    this.$refs.name.focus();
   },
   methods: {
     toggleModal() {
@@ -103,20 +104,51 @@ export default {
     updateLocalStorage: function () {
       localStorage.setItem('vue3.users', JSON.stringify(this.users));
     },
-    updateUsers: function() {
-      // code  
-    },
-    deleteUsers: function(id, event) {
-      const confirmation = confirm("Do you want to delete user?");
-      if (confirmation) {
-        this.users = this.users.filter(user => user.id !== id)
-        this.updateLocalStorage();
+    createUser: function(event) {
+      event.preventDefault();
+      if (this.operation === "Register") {
+        this.user.id = this.findMaxId() + 1;
+        this.users.push({
+          id: this.user.id,
+          name: this.user.name,
+          username: this.user.username,
+          email: this.user.email
+        });
       } else {
-        event.preventDefault();
+        this.users[this.userIndex].name = this.user.name;
+        this.users[this.userIndex].username = this.user.username;
+        this.users[this.userIndex].email = this.user.email;
       }
+      this.updateLocalStorage();
+      this.findMaxId();
+      this.clearFields();
+    },
+  },
+  findMaxId: function () {
+    const maxId = Math.max.apply(Math, this.users.map(function (user) {
+      return user.id;
+    }));
+    return maxId;
+  },
+  deleteUsers: function(id, event) {
+    const confirmation = confirm("Do you want to delete user?");
+    if (confirmation) {
+      this.users = this.users.filter(user => user.id !== id)
+      this.updateLocalStorage();
+    } else {
+      event.preventDefault();
     }
-  }
+  },
+  clearFields: function () {
+                this.user.id = "";
+                this.user.name = "";
+                this.user.username = "";
+                this.user.email = "";
+                this.operation = "Register";
+                this.$refs.name.focus();
+            }
 }
+
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
