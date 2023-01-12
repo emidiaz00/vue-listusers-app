@@ -22,29 +22,44 @@
             <td>{{ user.name }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.website }}</td>
+            <td><button v-on:click="this.toggleModal" class="btn btn-info btn-block">Update</button></td>
             <td><button @click="deleteUsers(user.id , $event)" class="btn btn-danger btn-block">Delete</button></td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="page">
-      <bs-modal v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose">
-        Some content displayed in the modal.
-        <button type="button" class="btn btn-secondary" v-on:click="this.toggleModal" data-dismiss="modal">Close</button>
-      </bs-modal>
-      <button v-on:click="this.toggleModal">Toggle modal</button>
+    <div class="w-50 mx-auto justify-content-center align-items-center">
+      <div v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose" class="card card-body">
+        <form ref="userForm" v-on:submit="createUser">
+          <div class="form-group">
+            <input type="text" ref="name" v-model="user.name" class="form-control" placeholder="Name"
+            minlength="10" maxlength="50" required />
+          </div>
+          <div class="form-group">
+            <input type="text" v-model="user.username" class="form-control" placeholder="Username"
+            minlength="6" maxlength="20" required />
+          </div>
+          <div class="form-group">
+            <input type="email" v-model="user.email" class="form-control" placeholder="Email"
+            minlength="10" maxlength="50" required />
+          </div>
+          <div class="form-group">
+            <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="operation">
+          </div>
+          <div class="form-group">
+            <input type="reset" class="btn btn-primary btn-block" value="Clear">
+          </div>
+          <button type="button" class="btn btn-secondary" v-on:click="this.toggleModal" data-dismiss="modal">Close</button>
+        </form>
+      </div>
     </div>
   </body>
 </template>
 
 <script>
-import ModalComponent from 'vue-bootstrap4-modal'
+
 
 export default {
-  components: {
-    'bs-modal': ModalComponent
-  },
-  // eslint-disable-next-line vue/multi-word-component-names
   data() {
     return {
       users: [],
@@ -89,7 +104,7 @@ export default {
       localStorage.setItem('vue3.users', JSON.stringify(this.users));
     },
     updateUsers: function() {
-    // code  
+      // code  
     },
     deleteUsers: function(id, event) {
       const confirmation = confirm("Do you want to delete user?");
