@@ -26,42 +26,42 @@
             <td>{{ user.name }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.website }}</td>
-            <td><button v-on:click="this.toggleModal" class="btn btn-info btn-block">Update</button></td>
+            <td><button v-on:click="this.toggleModal" @click="updateUsers(user.id)" class="btn btn-info btn-block">Update</button></td>
             <td><button @click="deleteUsers(user.id , $event)" class="btn btn-danger btn-block">Delete</button></td>
           </tr>
         </tbody>
       </table>
-
+      
       <button v-on:click="this.showModalRegisterUser" class="btn btn-info btn-block mb-30">Register User</button>
-
+      
       <div v-show="this.showRegisterUser" class="card card-body">
-          <h2>Register User</h2>
-          <form ref="userForm" v-on:submit="processUser">
-            <div class="form-group">
-              <input type="text" ref="name" v-model="user.name" class="form-control" placeholder="Name"
-              minlength="10" maxlength="50" required />
-            </div>
-            <div class="form-group">
-              <input type="text" v-model="user.username" class="form-control" placeholder="Username"
-              minlength="6" maxlength="20" required />
-            </div>
-            <div class="form-group">
-              <input type="email" v-model="user.email" class="form-control" placeholder="Email"
-              minlength="10" maxlength="50" required />
-            </div>
-            <div class="form-group">
-              <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="operation">
-            </div>
-            <div class="form-group">
-              <input type="reset" class="btn btn-primary btn-block" value="Clear">
-            </div>
-            <div class="form-group">
-              <button type="button" class="btn btn-secondary" v-on:click="this.hideModalRegisterUser" data-dismiss="modal">Close</button>
-            </div>
-          </form>
-        </div>
+        <h2>Register User</h2>
+        <form ref="userForm" v-on:submit="processUser">
+          <div class="form-group">
+            <input type="text" ref="name" v-model="user.name" class="form-control" placeholder="Name"
+            minlength="10" maxlength="50" required />
+          </div>
+          <div class="form-group">
+            <input type="text" v-model="user.username" class="form-control" placeholder="Username"
+            minlength="6" maxlength="20" required />
+          </div>
+          <div class="form-group">
+            <input type="email" v-model="user.email" class="form-control" placeholder="Email"
+            minlength="10" maxlength="50" required />
+          </div>
+          <div class="form-group">
+            <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="operation">
+          </div>
+          <div class="form-group">
+            <input type="reset" class="btn btn-primary btn-block" value="Clear">
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-secondary" v-on:click="this.hideModalRegisterUser" data-dismiss="modal">Close</button>
+          </div>
+        </form>
       </div>
-  
+    </div>
+    
     
     <div @click="hideRegisterUser()" class="w-50 mx-auto justify-content-center align-items-center">
       
@@ -100,6 +100,7 @@ export default {
     return {
       users: [],
       user: {
+        id: '',
         name: '',
         username: '',
         email: '',
@@ -147,8 +148,41 @@ export default {
     updateLocalStorage: function () {
       localStorage.setItem('vue3.users', JSON.stringify(this.users));
     },
-    updateUsers: function() {
-      
+    processUser: function (event) {
+      event.preventDefault();
+      if (this.operation === "Register") {
+        this.user.id = this.findMaxId() + 1;
+        this.users.push({
+          id: this.user.id,
+          name: this.user.name,
+          username: this.user.username,
+          email: this.user.email
+        });
+      } else {
+        this.users[this.userIndex].name = this.user.name;
+        this.users[this.userIndex].username = this.user.username;
+        this.users[this.userIndex].email = this.user.email;
+      }
+      this.updateLocalStorage();
+      this.findMaxId();
+      this.clearFields();
+    },
+    findMaxId: function () {
+      const maxId = Math.max.apply(Math, this.users.map(function (user) {
+        return user.id;
+      }));
+      return maxId;
+    },
+    updateUsers: function(id) {
+      this.updateUser = "Update";
+      const userFound = this.users.find((user, index) => {
+        this.userIndex = index;
+        return user.id === id;
+      });
+      this.user.name = userFound.name;
+      this.user.username = userFound.username;
+      this.user.email = userFound.email;
+      this.updateLocalStorage();
     },
     deleteUsers: function(id, event) {
       const confirmation = confirm("Do you want to delete user?");
