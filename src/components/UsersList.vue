@@ -1,12 +1,16 @@
 // eslint-disable-next-line vue/multi-word-component-names
 <template>
   <body class="bg-dark">
+    
     <nav class="navbar navbar-expand-lg text-white bg-secondary">
       <a class="navbar-brand text-white" href="#">Vue3 ListUsersApp</a>
     </nav>
+    
     <div class="container py-5">
+      
       <!-- Content here -->
       <table class="table table-hover table-dark">
+        
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -27,8 +31,40 @@
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="w-50 mx-auto justify-content-center align-items-center">
+
+      <button v-on:click="this.showModalRegisterUser" class="btn btn-info btn-block mb-30">Register User</button>
+
+      <div v-show="this.showRegisterUser" class="card card-body">
+          <h2>Register User</h2>
+          <form ref="userForm" v-on:submit="processUser">
+            <div class="form-group">
+              <input type="text" ref="name" v-model="user.name" class="form-control" placeholder="Name"
+              minlength="10" maxlength="50" required />
+            </div>
+            <div class="form-group">
+              <input type="text" v-model="user.username" class="form-control" placeholder="Username"
+              minlength="6" maxlength="20" required />
+            </div>
+            <div class="form-group">
+              <input type="email" v-model="user.email" class="form-control" placeholder="Email"
+              minlength="10" maxlength="50" required />
+            </div>
+            <div class="form-group">
+              <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="operation">
+            </div>
+            <div class="form-group">
+              <input type="reset" class="btn btn-primary btn-block" value="Clear">
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn-secondary" v-on:click="this.hideModalRegisterUser" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+    
+    <div @click="hideRegisterUser()" class="w-50 mx-auto justify-content-center align-items-center">
+      
       <div v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose" class="card card-body">
         <form ref="userForm" v-on:submit="createUser">
           <div class="form-group">
@@ -44,7 +80,7 @@
             minlength="10" maxlength="50" required />
           </div>
           <div class="form-group">
-            <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="operation">
+            <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="updateUser">
           </div>
           <div class="form-group">
             <input type="reset" class="btn btn-primary btn-block" value="Clear">
@@ -69,8 +105,10 @@ export default {
         email: '',
       },
       operation: "Register",
+      updateUser: "Update",
       userIndex: -1,
-      showModal: false
+      showModal: false,
+      showRegisterUser: false,
     }
   },
   created() {
@@ -94,6 +132,12 @@ export default {
       console.log('Modal has closed.');
       this.showModal = false
     },
+    showModalRegisterUser() {
+      this.showRegisterUser = true
+    },
+    hideModalRegisterUser() {
+      this.showRegisterUser = false
+    },
     listUsers: async function() {
       const res = await fetch("https://jsonplaceholder.typicode.com/users");
       const data = await res.json();
@@ -104,7 +148,7 @@ export default {
       localStorage.setItem('vue3.users', JSON.stringify(this.users));
     },
     updateUsers: function() {
-      // code  
+      
     },
     deleteUsers: function(id, event) {
       const confirmation = confirm("Do you want to delete user?");
@@ -120,4 +164,9 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+h2 {
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 26px;
+}
 </style>
