@@ -33,6 +33,34 @@
         </tbody>
       </table>
     </div>
+    <button v-on:click="this.showModalRegisterUser" class="btn btn-info btn-block mb-30">Register User</button>
+
+      <div v-show="this.showRegisterUser" class="card card-body">
+        <h2>Register User</h2>
+        <form ref="userForm" v-on:submit="processUser">
+          <div class="form-group">
+            <input type="text" ref="name" v-model="user.name" class="form-control" placeholder="Name"
+            minlength="10" maxlength="50" required />
+          </div>
+          <div class="form-group">
+            <input type="text" v-model="user.username" class="form-control" placeholder="Username"
+            minlength="6" maxlength="20" required />
+          </div>
+          <div class="form-group">
+            <input type="email" v-model="user.email" class="form-control" placeholder="Email"
+            minlength="10" maxlength="50" required />
+          </div>
+          <div class="form-group">
+            <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="operation">
+          </div>
+          <div class="form-group">
+            <input type="reset" class="btn btn-primary btn-block" value="Clear">
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-secondary" v-on:click="this.hideModalRegisterUser" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
 
     
     
@@ -68,20 +96,15 @@
         Some content displayed in the modal.
         <button type="button" class="btn btn-secondary" v-on:click="this.toggleModal" data-dismiss="modal">Close</button>
       </bs-modal>
-      <button v-on:click="this.toggleModal">Toggle modal</button>
+     
 
     </div>
   </body>
 </template>
 
 <script>
-import ModalComponent from 'vue-bootstrap4-modal'
 
 export default {
-  components: {
-    'bs-modal': ModalComponent
-  },
-  // eslint-disable-next-line vue/multi-word-component-names
   data() {
     return {
       users: [],
@@ -192,4 +215,5 @@ h2 {
   text-transform: uppercase;
   font-size: 26px;
 }
+
 </style>
