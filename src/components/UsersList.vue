@@ -1,12 +1,14 @@
 // eslint-disable-next-line vue/multi-word-component-names
 <template>
   <body class="bg-dark">
+    
     <nav class="navbar navbar-expand-lg text-white bg-secondary">
       <a class="navbar-brand text-white" href="#">Vue3 ListUsersApp</a>
     </nav>
-    <div class="vh-100 container py-5">
+    <div class="container py-5">
       <!-- Content here -->
       <table class="table table-hover table-dark">
+        
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -22,43 +24,28 @@
             <td>{{ user.name }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.website }}</td>
-            <td><button v-on:click="this.toggleModal" class="btn btn-info btn-block">Update</button></td>
             <td><button @click="deleteUsers(user.id , $event)" class="btn btn-danger btn-block">Delete</button></td>
           </tr>
         </tbody>
       </table>
-      <div class="w-50 mx-auto justify-content-center align-items-center">
-        <div v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose" class="card card-body">
-          <form ref="userForm" v-on:submit="createUser">
-            <div class="form-group">
-              <input type="text" ref="name" v-model="user.name" class="form-control" placeholder="Name"
-              minlength="10" maxlength="50" required />
-            </div>
-            <div class="form-group">
-              <input type="text" v-model="user.username" class="form-control" placeholder="Username"
-              minlength="6" maxlength="20" required />
-            </div>
-            <div class="form-group">
-              <input type="email" v-model="user.email" class="form-control" placeholder="Email"
-              minlength="10" maxlength="50" required />
-            </div>
-            <div class="form-group">
-              <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="operation">
-            </div>
-            <div class="form-group">
-              <input type="reset" class="btn btn-primary btn-block" value="Clear">
-            </div>
-            <button type="button" class="btn btn-secondary" v-on:click="this.toggleModal" data-dismiss="modal">Close</button>
-          </form>
-        </div>
-      </div>
+    </div>
+    <div class="page">
+      <bs-modal v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose">
+        Some content displayed in the modal.
+        <button type="button" class="btn btn-secondary" v-on:click="this.toggleModal" data-dismiss="modal">Close</button>
+      </bs-modal>
+      <button v-on:click="this.toggleModal">Toggle modal</button>
     </div>
   </body>
 </template>
 
 <script>
+import ModalComponent from 'vue-bootstrap4-modal'
 
 export default {
+  components: {
+    'bs-modal': ModalComponent
+  },
   // eslint-disable-next-line vue/multi-word-component-names
   data() {
     return {
@@ -70,8 +57,10 @@ export default {
         email: '',
       },
       operation: "Register",
+      updateUser: "Update",
       userIndex: -1,
-      showModal: false
+      showModal: false,
+      showRegisterUser: false,
     }
   },
   created() {
@@ -95,6 +84,12 @@ export default {
       console.log('Modal has closed.');
       this.showModal = false
     },
+    showModalRegisterUser() {
+      this.showRegisterUser = true
+    },
+    hideModalRegisterUser() {
+      this.showRegisterUser = false
+    },
     listUsers: async function() {
       const res = await fetch("https://jsonplaceholder.typicode.com/users");
       const data = await res.json();
@@ -104,52 +99,27 @@ export default {
     updateLocalStorage: function () {
       localStorage.setItem('vue3.users', JSON.stringify(this.users));
     },
-    createUser: function(event) {
-      event.preventDefault();
-      if (this.operation === "Register") {
-        this.user.id = this.findMaxId() + 1;
-        this.users.push({
-          id: this.user.id,
-          name: this.user.name,
-          username: this.user.username,
-          email: this.user.email
-        });
-      } else {
-        this.users[this.userIndex].name = this.user.name;
-        this.users[this.userIndex].username = this.user.username;
-        this.users[this.userIndex].email = this.user.email;
-      }
-      this.updateLocalStorage();
-      this.findMaxId();
-      this.clearFields();
+    updateUsers: function() {
+    // code  
     },
-  },
-  findMaxId: function () {
-    const maxId = Math.max.apply(Math, this.users.map(function (user) {
-      return user.id;
-    }));
-    return maxId;
-  },
-  deleteUsers: function(id, event) {
-    const confirmation = confirm("Do you want to delete user?");
-    if (confirmation) {
-      this.users = this.users.filter(user => user.id !== id)
-      this.updateLocalStorage();
-    } else {
-      event.preventDefault();
+    deleteUsers: function(id, event) {
+      const confirmation = confirm("Do you want to delete user?");
+      if (confirmation) {
+        this.users = this.users.filter(user => user.id !== id)
+        this.updateLocalStorage();
+      } else {
+        event.preventDefault();
+      }
     }
-  },
-  clearFields: function () {
-                this.user.id = "";
-                this.user.name = "";
-                this.user.username = "";
-                this.user.email = "";
-                this.operation = "Register";
-                this.$refs.name.focus();
-            }
+  }
 }
 
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+h2 {
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 26px;
+}
 </style>
