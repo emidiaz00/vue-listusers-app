@@ -26,7 +26,7 @@
             <td>{{ user.name }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.website }}</td>
-            <td><button v-on:click="this.toggleModal" @click="updateUsers(user.id)" class="btn btn-info btn-block">Update</button></td>
+            <td><button v-on:click="this.toggleModal" v-bind:value="operationUpdate" @click="updateUsers(user.id)" class="btn btn-info btn-block">Update</button></td>
             <td><button @click="deleteUsers(user.id , $event)" class="btn btn-danger btn-block">Delete</button></td>
           </tr>
         </tbody>
@@ -80,7 +80,7 @@
             minlength="10" maxlength="50" required />
           </div>
           <div class="form-group">
-            <input type="submit" class="btn btn-success btn-block text-dark" v-bind:value="updateUser">
+            <input type="submit" class="btn btn-success btn-block text-dark">
           </div>
           <div class="form-group">
             <input type="reset" class="btn btn-primary btn-block" value="Clear">
@@ -103,10 +103,10 @@ export default {
         id: '',
         name: '',
         username: '',
-        email: '',
+        email: ''
       },
       operation: "Register",
-      updateUser: "Update",
+      operationUpdate: "Update",
       userIndex: -1,
       showModal: false,
       showRegisterUser: false,
@@ -173,16 +173,18 @@ export default {
       }));
       return maxId;
     },
-    updateUsers: function(id) {
-      this.updateUser = "Update";
-      const userFound = this.users.find((user, index) => {
-        this.userIndex = index;
-        return user.id === id;
-      });
-      this.user.name = userFound.name;
-      this.user.username = userFound.username;
-      this.user.email = userFound.email;
-      this.updateLocalStorage();
+    updateUsers: function(id, event) {
+      event.preventDefault();
+      if (this.operationUpdate === "Update") {
+        const userFound = this.users.find((user, index) => {
+          this.userIndex = index;
+          return user.id === id;
+        });
+        this.user.name = userFound.name;
+        this.user.username = userFound.username;
+        this.user.email = userFound.email;
+        this.updateLocalStorage();
+      }
     },
     deleteUsers: function(id, event) {
       const confirmation = confirm("Do you want to delete user?");
