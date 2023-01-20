@@ -91,14 +91,6 @@
       </div>
       </div>
 
-    <div class="page">
-      <bs-modal v-show="this.showModal" v-bind:on-open="this.handleOpen" v-bind:on-close="this.handleClose">
-        Some content displayed in the modal.
-        <button type="button" class="btn btn-secondary" v-on:click="this.toggleModal" data-dismiss="modal">Close</button>
-      </bs-modal>
-     
-
-    </div>
   </body>
 </template>
 
